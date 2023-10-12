@@ -1,0 +1,27 @@
+﻿.show-menu {
+    display: block;
+    background-color: #D2D2D2;
+}
+
+.user-button {
+    margin-left: .5em;
+    color: #e6961e;
+}
+    .user-button:focus {
+        outline: 6px solid #e6961e;
+    }
+
+.top-row a {
+    margin-left: 0;
+    color: #0A1F32;
+}
+
+.dropdown-item:hover {
+    color: #e6961e;
+    background-color: #344756;
+}
+
+.button {
+    background-color: #D2D2D2;
+    color: #e6961e;
+}

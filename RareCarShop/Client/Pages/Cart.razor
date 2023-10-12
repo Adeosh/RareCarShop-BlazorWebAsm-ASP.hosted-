@@ -1,0 +1,98 @@
+﻿@page "/cart"
+
+@inject ICartService CartService
+@inject IOrderService OrderService
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Корзина Покупок</PageTitle>
+
+<h3>Корзина Покупок</h3>
+
+@if (cartCars == null || cartCars.Count == 0)
+{
+    <span>@message</span>
+}
+else
+{
+    <div>
+        @foreach (var car in cartCars)
+        {
+            <div class="container">
+                <div class="image-wrapper">
+                    <img height="480" width="640" src="@car.ImageUrl" class="image" style="border-radius: 30px" />
+                </div>
+                <div class="name">
+                    <h5><a href="/car/@car.CarId">@car.Brand</a></h5>
+                    <span>@car.CarEquipment</span><br />
+                    <input type="number" value="@car.Quantity"
+                   @onchange="@((ChangeEventArgs e) => UpdateQuantity(e, car))"
+                   class="form-control input-quantity"
+                   min="1" />
+                    <button class="btn btn-danger" @onclick="@(() =>
+                        RemoveCarFromCart(car.CarId, car.CarEquipmentId))">
+                        Удалить
+                    </button>
+                </div>
+                <div class="cart-car-price">$@(car.Price * car.Quantity)</div>
+            </div>
+        }
+        <div class="cart-car-price">
+            Total (@cartCars.Count): $@cartCars.Sum(car => @car.Price * car.Quantity)
+        </div>
+    </div>
+    @if (isAuthenticated)
+    {
+        <div>
+            <h5>Адрес Доставки</h5>
+            <AddressForm />
+            <button @onclick="PlaceOrder" class="btn alert-success float-end">Подтвердить заказ</button>
+        </div>
+    }
+    
+}
+
+
+
+@code {
+    List<CartCarResponse> cartCars = null;
+    string message = "Загрузка корзины...";
+    bool isAuthenticated = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAuthenticated = await AuthService.IsUserAuthenticated();
+        await LoadCart();
+    }
+
+    private async Task RemoveCarFromCart(int carId, int carEquipmentId)
+    {
+        await CartService.RemoveCarFromCart(carId, carEquipmentId);
+        await LoadCart();
+    }
+
+    private async Task LoadCart()
+    {
+        await CartService.GetCartItemsCount();
+        cartCars = await CartService.GetCartCars();
+        if (cartCars == null || cartCars.Count == 0)
+        {
+            message = "Ваша корзина пуста.";
+        }
+    }
+
+    private async Task UpdateQuantity(ChangeEventArgs e, CartCarResponse car)
+    {
+        car.Quantity = int.Parse(e.Value.ToString());
+        if (car.Quantity < 1)
+            car.Quantity = 1;
+        await CartService.UpdateQuantity(car);
+    }
+
+    private async Task PlaceOrder()
+    {
+        string url = await OrderService.PlaceOrder();
+        NavigationManager.NavigateTo(url);
+    }
+}
+

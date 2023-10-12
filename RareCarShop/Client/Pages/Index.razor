@@ -1,0 +1,42 @@
+﻿@page "/"
+@page "/search/{searchText}/{page:int}"
+@page "/{categoryUrl}"
+
+@inject ICarService CarService
+
+<PageTitle>Мой магазин</PageTitle>
+
+<CarList />
+
+@code {
+    private string error;
+
+    [Parameter]
+    public string? CategoryUrl { get; set; } = null;
+
+    [Parameter]
+    public string? SearchText { get; set; } = null;
+
+    [Parameter]
+    public int Page { get; set; } = 1;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            if (SearchText != null)
+            {
+                await CarService.SearchCar(SearchText, Page);
+            }
+            else
+            {
+                await CarService.GetCars(CategoryUrl);
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}
+

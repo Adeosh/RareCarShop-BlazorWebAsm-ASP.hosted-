@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+        
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <Search />
+            <div style="margin-right: 1rem;margin-left: 1rem">
+                <UserButton />
+            </div>
+            <div style="margin-right: 10rem;margin-left: -1rem">
+                <ShoppingCart/>
+            </div>
+        </div>
+
+        <article class="content px-4">
+            <CustomErrorBoundary Context="Exception" @ref="@errorBoundary">
+                <ChildContent>
+                    @Body
+                </ChildContent>
+                <ErrorContent>
+                    <div class="alert bg-danger text-white alert-dismissible">
+                        @Exception.GetType(): @Exception.Message
+                        <button class="btn-close" @onclick=@errorBoundary.Recover></button>
+                    </div>
+                </ErrorContent>
+            </CustomErrorBoundary>
+        </article>
+    </main>
+</div>
+
+@code {
+    private ErrorBoundary errorBoundary;
+}

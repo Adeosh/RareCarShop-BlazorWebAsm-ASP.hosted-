@@ -1,0 +1,12 @@
+﻿.button {
+    background-color: #e6961e;
+    color: #D2D2D2;
+}
+
+    .button:focus {
+        outline: 6px solid #D2D2D2;
+    }
+
+.badge {
+    color: #D2D2D2;
+}

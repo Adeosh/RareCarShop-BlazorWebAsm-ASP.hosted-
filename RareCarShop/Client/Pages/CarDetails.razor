@@ -1,0 +1,106 @@
+﻿@page "/car/{id:int}"
+
+@inject ICarService CarService
+@inject ICartService CartService
+
+@if (car == null)
+{
+    <span>@message</span>
+}
+else
+{
+    <div class="media">
+        <div class="image-conteiner mr-2">
+            @if (!string.IsNullOrEmpty(car.ImageUrl1))
+            {
+                <img class="media-img" src="@car.ImageUrl1" alt="@car.Brand" />
+                <img class="media-img" src="@car.ImageUrl3" alt="@car.Brand" />
+            }
+            else
+            {
+                <MudCarousel Class="mud-width-full" ItemsSource="@car.Images" Style="height: 200px;">
+                    <ItemTemplate>
+                        <MudImage Src="@context.Data"></MudImage>>
+                    </ItemTemplate>
+                </MudCarousel>
+            }
+        </div>
+        <div class="media-body">
+            <h2 class="mb-0">@car.Brand</h2>
+            <p>@car.Description</p>
+            @if (car.Variants != null && car.Variants.Count > 1)
+            {
+                <div class="mb-3">
+                    <select class="form-select" @bind="currentEquipId">
+                        @foreach (var variant in car.Variants)
+                        {
+                            <option value="@variant.CarEquipmentId">@variant.CarEquipment.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            @if (GetSelectedVariant() != null)
+            {
+                @if (GetSelectedVariant().OriginalPrice > GetSelectedVariant().Price)
+                {
+                    <h6 class="text-muted original-price">
+                        $@GetSelectedVariant().OriginalPrice
+                    </h6>
+                }
+                <h4 class="price">
+                    $@GetSelectedVariant().Price
+                </h4>
+            }
+            <button class="btn btn-primary" @onclick="AddToCart">
+                <i class="oi oi-cart"></i>&nbsp;&nbsp;&nbsp;Добавить
+            </button>
+        </div>
+    </div>
+
+}
+
+@code {
+    private Car? car = null;
+    private string message = string.Empty;
+    private int currentEquipId = 1;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "...";
+
+        var result = await CarService.GetCar(Id);
+        if (!result.Success)
+        {
+            message = result.Message;
+        }
+        else
+        {
+            car = result.Data;
+            if (car?.Variants.Count > 0)
+            {
+                currentEquipId = car.Variants[0].CarEquipmentId;
+            }
+        }
+    }
+
+    private PriceVariant GetSelectedVariant()
+    {
+        var variant = car?.Variants.FirstOrDefault(v => v.CarEquipmentId == currentEquipId);
+        return variant;
+    }
+
+    private async Task AddToCart()
+    {
+        var priceVariant = GetSelectedVariant();
+        var cartItem = new CartItem
+            {
+                CarId = priceVariant.CarId,
+                CarEquipmentId = priceVariant.CarEquipmentId
+            };
+
+        await CartService.AddToCart(cartItem);
+    }
+}

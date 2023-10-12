@@ -1,0 +1,80 @@
+﻿@inject ICarService CarService
+@implements IDisposable
+
+@if (CarService.Cars == null || CarService.Cars.Count == 0)
+{
+    <span>@CarService.Message</span>
+}
+else
+{
+    <div style="height: 2px;background-color: #e6961e;"></div>
+    <ul class="list-unstyled">
+        @foreach (var car in CarService.Cars)
+        {
+            <li class="media my-3">
+                <div class="image-container mr-2">
+                    <a href="/car/@car.Id">
+                        @if (!string.IsNullOrEmpty(car.ImageUrl1))
+                        {
+                            <img height="180" width="200" class="media-img" style="margin-inline: 4px;" src="@car.ImageUrl1" alt="@car.Brand" />
+                            <img height="180" width="200" class="media-img" style="margin-inline: 4px;" src="@car.ImageUrl2" alt="@car.Brand" />
+                            <img height="180" width="200" class="media-img" style="margin-inline: 4px;" src="@car.ImageUrl3" alt="@car.Brand" />
+                        }
+                        else if (car.Images.Count > 0)
+                        {
+                            <img class="media-img" src="@car.Images[0].Data" alt="@car.Brand" />
+                        }
+                    </a>
+                </div>
+                <div class="media-body">
+                    <a href="/car/@car.Id">
+                        <h4 class="mb-0">@car.Brand</h4>
+                    </a>
+                    <p>@car.Description</p>
+                    <p><i>Тип кузова: <u>@car.BodyType</u></i></p>
+                    <p><i>Трансмиссия: <u>@car.Drivetrain</u></i></p>
+                    <p><i>Мощность двигателя: <u>@car.EngineCapacity л\с</u></i></p>
+                    <p><i>Максимальная скорость: <u>@car.MaxSpeed км\ч</u></i></p>
+                    <h5 class="price">
+                        @GetPriceText(car)
+                    </h5>
+                    <div style="height: 2px;background-color: #e6961e;"></div>
+                </div>
+            </li>
+        }
+    </ul>
+    for (var i = 1; i <= CarService.PageCount; i++)
+    {
+        <a class="btn
+                 @(i == CarService.CurrentPage ? "btn-info" : "btn-outline-info")
+                 page-selection"
+           href="/search/@CarService.LastSearchText/@i">@i</a>
+    }
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        CarService.CarsChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        CarService.CarsChanged -= StateHasChanged;
+    }
+
+    private string GetPriceText(Car car)
+    {
+        var variants = car.Variants;
+        if (variants.Count == 0)
+        {
+            return string.Empty;
+        }
+        else if (variants.Count == 1)
+        {
+            return $"${variants[0].Price}";
+        }
+        decimal minPrice = variants.Min(v => v.Price);
+        return $"Starting at ${minPrice}";
+    }
+}

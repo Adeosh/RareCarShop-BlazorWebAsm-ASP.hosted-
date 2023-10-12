@@ -1,0 +1,96 @@
+.navbar-toggler {
+    background-color: #2D384A;
+}
+
+.top-row {
+    height: 3.5rem;
+    background-color: #2D384A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #e6961e;
+    height: 100px;
+}
+
+.navbar-brand {
+    font-size: 2.2rem;
+    color: #e6961e;
+    position: relative;
+    left: 22px;
+}
+
+.shadow-text {
+    color: #e6961e;
+    font-size: 2em;
+    font-weight: bold;
+    padding: 20px 0px;
+    text-transform: uppercase;
+    line-height: 1;
+    -webkit-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    position: relative;
+    left: 22px;
+}
+
+    .shadow-text:hover {
+        color: royalblue;
+        text-shadow: 2px 2px 2px #000;
+    }
+
+.oi {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+    color: #e6961e;
+}
+
+.nav-item {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+    .nav-item:first-of-type {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item ::deep a {
+        color: #D2D2D2;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+    }
+
+        .nav-item ::deep a.active {
+            background-color: #2D384A;
+            color: #D2D2D2;
+            border-bottom: 1px solid #e6961e;
+        }
+
+        .nav-item ::deep a:hover {
+            background-color: #344756;
+            color: #D2D2D2;
+        }
+
+@media (min-width: 641px) {
+    .navbar-toggler {
+        display: none;
+    }
+
+    .collapse {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+    
+    .nav-scrollable {
+        /* Allow sidebar to scroll for tall menus */
+        height: calc(100vh - 3.5rem);
+        overflow-y: auto;
+    }
+}

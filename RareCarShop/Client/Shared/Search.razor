@@ -1,0 +1,56 @@
+﻿@inject NavigationManager NavigationManager
+@inject ICarService CarService
+
+<div class="input-group">
+    <input @bind-value="searchText"
+    @bind-value:event="oninput"
+           type="search"
+           list="cars"
+    @onkeyup="HandleSearch"
+           class="form-control"
+           placeholder="Поиск..."
+    @ref="searchInput" />
+    <datalist id="cars">
+        @foreach (var suggestion in suggestions)
+        {
+            <option>@suggestion</option>
+        }
+    </datalist>
+    <div class="input-group-append">
+        <button class="btn button" style="margin-right: 0.5rem;margin-left: 0.5rem" @onclick="SearchCars">
+            <span class="oi oi-magnifying-glass"></span>
+        </button>
+    </div>
+</div>
+
+@code {
+    private string searchText = string.Empty;
+    private List<string> suggestions = new List<string>();
+    protected ElementReference searchInput;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await searchInput.FocusAsync();
+        }
+    }
+
+    public void SearchCars()
+    {
+        NavigationManager.NavigateTo($"search/{searchText}/1");
+    }
+
+    public async Task HandleSearch(KeyboardEventArgs args)
+    {
+        if (args.Key == null || args.Key.Equals("Enter"))
+        {
+            SearchCars();
+        }
+        else if (searchText.Length > 1)
+        {
+            suggestions = await CarService.GetCarSearchSuggestions(searchText);
+        }
+    }
+}
+

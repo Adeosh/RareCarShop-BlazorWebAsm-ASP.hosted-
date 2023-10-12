@@ -1,0 +1,14 @@
+﻿input {
+    background-color: #2D384A;
+    border: solid 1px #344756;  
+}
+
+.button {
+    color: #D2D2D2;
+    background-color: #344756;
+}
+
+input:focus {
+    outline: 8px solid #e6961e;
+    background-color: #D2D2D2;
+}
