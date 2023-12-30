@@ -38,7 +38,7 @@ else
             </div>
         }
         <div class="cart-car-price">
-            Total (@cartCars.Count): $@cartCars.Sum(car => @car.Price * car.Quantity)
+            Сумма (@cartCars.Count): $@cartCars.Sum(car => @car.Price * car.Quantity)
         </div>
     </div>
     @if (isAuthenticated)
